@@ -2,6 +2,6 @@
 
 namespace Skolkovo22\Http\Protocol;
 
-class ProtocolException extends \Exception
+class ProtocolException extends \InvalidArgumentException
 {
 }

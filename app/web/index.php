@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\ExampleApp;
+use App\BookingApp;
 
-(new ExampleApp())->run();
+(new BookingApp(\dirname(__DIR__)))->run();
