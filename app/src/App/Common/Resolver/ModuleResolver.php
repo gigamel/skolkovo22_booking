@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Common\Logic;
+namespace App\Common\Resolver;
 
 use App\Http\Request;
 use Skolkovo22\Http\Routing\CollectionInterface;

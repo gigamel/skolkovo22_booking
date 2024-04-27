@@ -1,0 +1,24 @@
+.app {
+    max-width: 960px;
+    margin: auto;
+    padding: 15px;
+}
+
+.estates-list {
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.estate {
+    float: left;
+    margin: 0;
+    padding: 0;
+    word-break: break-all;
+    width: 33.33333333333333%;
+}
+
+.title {
+    font-size: 150%;
+    font-weight: 700;
+}

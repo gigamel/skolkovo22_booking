@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App;
 
-use App\Common\Logic\DriversLoader;
-use App\Common\Logic\ModuleConfigurator;
-use App\Common\Logic\ModuleLauncher;
-use App\Common\Logic\ModuleResolver;
-use App\EventListener\MethodListener;
+use App\Common\Loader\DriversLoader;
+use App\Common\Configurator\ModuleConfigurator;
+use App\Common\Launcher\ModuleLauncher;
+use App\Common\Resolver\ModuleResolver;
+use App\EventListener\EventsListener;
 use App\Security\UserAccessChecker;
 use Modules\Skolkovo22\Booking\Entity\EstateCollection;
 use Modules\Skolkovo22\Booking\Module;
@@ -74,12 +74,11 @@ final class BookingApp
     {
         $appConfig = require_once($this->getConfigDirectory() . '/app.php');
 
-        MethodListener::onCall(
-            Module::class,
-            'run',
+        EventsListener::on(
+            'skolkovo22.get.estates',
             function (EstateCollection $collection) {
                 foreach ($collection->getCollection() as $estate) {
-                    $estate->title = $estate->title . ' handled from ' . __FILE__ . '::' . __LINE__;
+                    $estate->summary = $estate->summary . ' (handled from ' . __FILE__ . '::' . __LINE__ . ')';
                 }
             }
         );

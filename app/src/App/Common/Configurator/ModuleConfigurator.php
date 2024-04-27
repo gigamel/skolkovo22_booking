@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Common\Logic;
+namespace App\Common\Configurator;
 
 use App\Common\AbstractModule;
+use App\Template\RendererEngine;
 use Skolkovo22\Http\Routing\RouteInterface;
 
 final class ModuleConfigurator
@@ -49,6 +50,7 @@ final class ModuleConfigurator
         
         $module = new $moduleClass();
         $module->setDir(dirname((new \ReflectionClass($moduleClass))->getFileName()));
+        $module->setTemplateRenderer(new RendererEngine());
         return $module;
     }
     

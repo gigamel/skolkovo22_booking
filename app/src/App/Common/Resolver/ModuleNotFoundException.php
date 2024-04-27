@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Common\Logic;
+namespace App\Common\Resolver;
 
 final class ModuleNotFoundException extends \RuntimeException
 {

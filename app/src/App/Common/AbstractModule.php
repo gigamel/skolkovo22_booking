@@ -12,6 +12,9 @@ abstract class AbstractModule
     /** @var string */
     protected string $dir;
     
+    /** @var AbstractTemplateRenderer */
+    protected $templateRenderer;
+
     /**
      * @param string $dir
      *
@@ -22,6 +25,17 @@ abstract class AbstractModule
         $this->dir = $dir;
     }
     
+    /**
+     * @param AbstractTemplateRenderer $templateRenderer
+     *
+     * @return void
+     */
+    public function setTemplateRenderer(AbstractTemplateRenderer $templateRenderer): void
+    {
+        $this->templateRenderer = $templateRenderer;
+        $this->templateRenderer->setBaseDirectory($this->dir . '/view');
+    }
+
     /**
      * @param string $template
      * @param array $vars
@@ -36,15 +50,11 @@ abstract class AbstractModule
         int $statusCode = ServerMessageInterface::STATUS_OK,
         array $headers = []
     ): ServerMessageInterface {
-        $view = $this->dir . '/view/' . $template;
-        extract($vars);
-        
-        ob_start();
-        require_once $view;
-        $content = ob_get_contents();
-        ob_end_clean();
-        
-        return new Response($content, $statusCode, $headers);
+        return new Response(
+            $this->templateRenderer->render($template, $vars),
+            $statusCode,
+            $headers
+        );
     }
     
     /**
