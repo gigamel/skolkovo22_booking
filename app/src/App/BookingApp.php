@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Common\Base\DIInterface;
+use App\Common\DI\ServiceContainer;
 use App\Common\Loader\DriversLoader;
 use App\Common\Configurator\ModuleConfigurator;
 use App\Common\Launcher\ModuleLauncher;
@@ -57,10 +59,10 @@ final class BookingApp
      */
     private function mainProcess(): void
     {
-        $this->configuration();
+        $di = $this->configuration();
         $route = $this->routing();
 
-        $this->moduleConfiguration($route);
+        $this->moduleConfiguration($route, $di);
 
         $this->accessChecking();
         $this->moduleDriversLoading();
@@ -68,9 +70,9 @@ final class BookingApp
     }
 
     /**
-     * @return void
+     * @return DIInterface
      */
-    private function configuration(): void
+    private function configuration(): DIInterface
     {
         $appConfig = require_once($this->getConfigDirectory() . '/app.php');
 
@@ -82,6 +84,9 @@ final class BookingApp
                 }
             }
         );
+
+        $di = new ServiceContainer();
+        return $di;
     }
 
     /**
@@ -105,14 +110,16 @@ final class BookingApp
     }
 
     /**
+     * @param RouteInterface $route
+     * @param DIInterface $di
+     *
      * @return void
      */
-    private function moduleConfiguration(RouteInterface $route): void
+    private function moduleConfiguration(RouteInterface $route, DIInterface $di): void
     {
-        $moduleConfigurator = new ModuleConfigurator($route);
-        $response = $moduleConfigurator->getConfiguredModule()->run();
+        $configurator = (new ModuleConfigurator($route));
+        $response = $configurator->getConfiguredModule($di)->run();
         $response->send();
-
         echo $response->getBody();
     }
 

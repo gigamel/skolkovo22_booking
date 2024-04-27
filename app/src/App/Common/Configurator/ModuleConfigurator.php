@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Common\Configurator;
 
 use App\Common\AbstractModule;
+use App\Common\Base\DIHydrator;
+use App\Common\Base\DIInterface;
 use App\Template\RendererEngine;
 use Skolkovo22\Http\Routing\RouteInterface;
 
@@ -39,9 +41,11 @@ final class ModuleConfigurator
     }
     
     /**
+     * @param DIInterface $di
+     *
      * @return AbstractModule
      */
-    public function getConfiguredModule(): AbstractModule
+    public function getConfiguredModule(DIInterface $di): AbstractModule
     {
         $moduleClass = $this->getModuleClass();
         if (!is_a($moduleClass, AbstractModule::class, true)) {
@@ -51,6 +55,11 @@ final class ModuleConfigurator
         $module = new $moduleClass();
         $module->setDir(dirname((new \ReflectionClass($moduleClass))->getFileName()));
         $module->setTemplateRenderer(new RendererEngine());
+
+        if ($module instanceof DIHydrator) {
+            $module->hydrate($di);
+        }
+
         return $module;
     }
     
