@@ -9,7 +9,10 @@ interface RouterInterface
     /**
      * @param ClientMessageInterface $request
      *
-     * @return string
+     * @return RouteInterface
+     *
+     * @throws InvalidCollectionException
+     * @throws RouteNotFoundException
      */
-    public function handle(ClientMessageInterface $request): string;
+    public function handle(ClientMessageInterface $request): RouteInterface;
 }

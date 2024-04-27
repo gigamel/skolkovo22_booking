@@ -2,7 +2,8 @@
     "autoload": {
         "psr-4": {
             "App\\": "src/App/",
-            "Skolkovo22\\": "src/Skolkovo22/"
+            "Skolkovo22\\": "src/Skolkovo22/",
+            "Modules\\": "modules/"
         }
     }
 }

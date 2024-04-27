@@ -13,7 +13,7 @@ final class Request implements ClientMessageInterface
      */
     public function getMethod(): string
     {
-        return strtoupper($_SERVER['REQUEST_METHOD']);
+        return \strtoupper($_SERVER['REQUEST_METHOD']);
     }
 
     /**
@@ -21,7 +21,7 @@ final class Request implements ClientMessageInterface
      */
     public function getPath(): string
     {
-        return parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        return \parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '/';
     }
 
     /**

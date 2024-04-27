@@ -13,9 +13,21 @@ interface ClientMessageInterface
         METHOD_PATCH = 'PATCH',
         METHOD_DELETE = 'DELETE',
         METHOD_TRACE = 'TRACE',
-        METHOD_CONNEC = 'CONNECT'
+        METHOD_CONNECT = 'CONNECT'
     ;
     
+    public const HTTP_METHODS = [
+        self::METHOD_OPTIONS,
+        self::METHOD_GET,
+        self::METHOD_HEAD,
+        self::METHOD_POST,
+        self::METHOD_PUT,
+        self::METHOD_PATCH,
+        self::METHOD_DELETE,
+        self::METHOD_TRACE,
+        self::METHOD_CONNECT,
+    ];
+
     /**
      * @return string
      */

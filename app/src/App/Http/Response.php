@@ -82,7 +82,7 @@ class Response implements ServerMessageInterface
      */
     public function putHeader(string $header, string $value): void
     {
-        $this->headers[ucwords(strtolower($header), '-')] = $value;
+        $this->headers[\ucwords(\strtolower($header), '-')] = $value;
     }
     
     /**
@@ -92,19 +92,19 @@ class Response implements ServerMessageInterface
      */
     public function send(): void
     {
-        if (headers_sent()) {
+        if (\headers_sent()) {
             return;
         }
         
         $statusMessage = self::MESSAGES[$this->getStatusCode()] ?? null;
-        if (is_null($statusMessage)) {
-            throw new ProtocolException(sprintf('Unknown HTTP status code. Actual: %d', $this->getStatusCode()));
+        if (\is_null($statusMessage)) {
+            throw new ProtocolException(\sprintf('Unknown HTTP status code. Actual: %d', $this->getStatusCode()));
         }
         
         foreach ($this->getHeaders() as $header => $value) {
-            header(sprintf('%s: %s', $header, $value));
+            \header(\sprintf('%s: %s', $header, $value));
         }
         
-        header(sprintf('%s %s %s', $this->getProtocolVersion(), $this->getStatusCode(), $statusMessage));
+        \header(\sprintf('%s %s %s', $this->getProtocolVersion(), $this->getStatusCode(), $statusMessage));
     }
 }

@@ -4,9 +4,16 @@ declare(strict_types=1);
 
 namespace App;
 
-use App\Runtime\ExtesionsLoader;
-use App\Runtime\ModuleRunner;
+use App\Common\Logic\DriversLoader;
+use App\Common\Logic\ModuleConfigurator;
+use App\Common\Logic\ModuleLauncher;
+use App\Common\Logic\ModuleResolver;
+use App\EventListener\MethodListener;
 use App\Security\UserAccessChecker;
+use Modules\Skolkovo22\Booking\Entity\EstateCollection;
+use Modules\Skolkovo22\Booking\Module;
+use Skolkovo22\Http\Routing\Collection;
+use Skolkovo22\Http\Routing\RouteInterface;
 
 final class BookingApp
 {
@@ -25,8 +32,24 @@ final class BookingApp
         try {
             $this->mainProcess();
         } catch (\Throwable $e) {
-            echo $e->getMessage();
+            $this->exceptionProcess($e);
         }
+    }
+
+    /**
+     * @param \Throwable $e
+     *
+     * @return void
+     */
+    private function exceptionProcess(\Throwable $e): void
+    {
+        echo sprintf(
+            "File: %s:%d<br>Message: %s<br>Trace:<br><pre>%s</pre>",
+            $e->getFile(),
+            $e->getLine(),
+            $e->getMessage(),
+            $e->getTraceAsString()
+        );
     }
 
     /**
@@ -35,9 +58,12 @@ final class BookingApp
     private function mainProcess(): void
     {
         $this->configuration();
-        $this->routing();
+        $route = $this->routing();
+
+        $this->moduleConfiguration($route);
+
         $this->accessChecking();
-        $this->moduleExtensionsLoading();
+        $this->moduleDriversLoading();
         $this->moduleRunning();
     }
 
@@ -47,14 +73,28 @@ final class BookingApp
     private function configuration(): void
     {
         $appConfig = require_once($this->getConfigDirectory() . '/app.php');
+
+        MethodListener::onCall(
+            Module::class,
+            'run',
+            function (EstateCollection $collection) {
+                foreach ($collection->getCollection() as $estate) {
+                    $estate->title = $estate->title . ' handled from ' . __FILE__ . '::' . __LINE__;
+                }
+            }
+        );
     }
 
     /**
-     * @return void
+     * @return RouteInterface
      */
-    private function routing(): void
+    private function routing(): RouteInterface
     {
-        // Todo
+        $routes = new Collection();
+        require_once($this->getConfigDirectory() . '/routes.php');
+
+        $resolver = new ModuleResolver();
+        return $resolver->resolve($routes);
     }
 
     /**
@@ -68,9 +108,21 @@ final class BookingApp
     /**
      * @return void
      */
-    private function moduleExtensionsLoading(): void
+    private function moduleConfiguration(RouteInterface $route): void
     {
-        $extensionsLoader = new ExtesionsLoader();
+        $moduleConfigurator = new ModuleConfigurator($route);
+        $response = $moduleConfigurator->getConfiguredModule()->run();
+        $response->send();
+
+        echo $response->getBody();
+    }
+
+    /**
+     * @return void
+     */
+    private function moduleDriversLoading(): void
+    {
+        $extensionsLoader = new DriversLoader();
     }
 
     /**
@@ -78,7 +130,7 @@ final class BookingApp
      */
     private function moduleRunning(): void
     {
-        $moduleRunner = new ModuleRunner();
+        $moduleRunner = new ModuleLauncher();
     }
 
     /**
