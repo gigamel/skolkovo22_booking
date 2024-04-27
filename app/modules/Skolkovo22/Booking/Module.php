@@ -22,7 +22,7 @@ final class Module extends AbstractModule
         $estateCollection->put(new Estate('House', 'Some house'));
         
         EventsListener::trigger('skolkovo22.get.estates', $estateCollection);
-        
+
         return $this->render(
             'index.php',
             [

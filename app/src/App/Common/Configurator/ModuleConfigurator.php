@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Common\Configurator;
 
 use App\Common\AbstractModule;
-use App\Common\Base\DIHydrator;
 use App\Common\Base\DIInterface;
+use App\Common\Loader\DILoaderInterface;
 use App\Template\RendererEngine;
 use Skolkovo22\Http\Routing\RouteInterface;
 
@@ -56,8 +56,8 @@ final class ModuleConfigurator
         $module->setDir(dirname((new \ReflectionClass($moduleClass))->getFileName()));
         $module->setTemplateRenderer(new RendererEngine());
 
-        if ($module instanceof DIHydrator) {
-            $module->hydrate($di);
+        if ($module instanceof DILoaderInterface) {
+            $module->loadServices($di);
         }
 
         return $module;
